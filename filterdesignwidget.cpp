@@ -131,7 +131,7 @@ std::vector<FloatType> FilterDesignWidget::makeFilterCoefficients() {
 	FloatType* pFilterTaps;
 	std::vector<FloatType> filterTaps;
 
-	constexpr bool padIR = false;
+	static constexpr bool padIR = false;
 	if constexpr(padIR) {
 		filterTaps.resize(2 * filterSize, 0.0);
 		pFilterTaps = filterTaps.data() + filterSize / 2;
@@ -196,19 +196,11 @@ void FilterDesignWidget::plotVector(QPixmap* pm, const std::vector<double>& data
 	p.translate(0, h + a * sy);
 	p.scale(1.0, -sy);
 
-	int xOfInterest = sz / 4;
-	bool xOfInterestFound = false;
 	double xs = 1.0 * w / sz;
 	QVector<QPointF> points;
 	for(size_t i = 0; i < sz; i++) {
 		double x = i * xs;
 		QPointF pt{x,  data.at(i)};
-		if(!xOfInterestFound) {
-			if (i >= xOfInterest) {
-				xOfInterestFound = true;
-				qDebug() << i << data.at(i) ;
-			}
-		}
 		points.append(pt);
 	}
 
@@ -232,7 +224,6 @@ void FilterDesignWidget::plotVector(QPixmap* pm, const std::vector<double>& data
 			p.setPen(txtPen);
 			p.drawText(t, QString::number(gy, 'f', plotInfo.precision.first));
 			p.setWorldMatrixEnabled(true);
-
 			gy += o;
 		}
 	}
@@ -278,12 +269,12 @@ void FilterDesignWidget::plotResponse(const QVector<double>& impulse)
 	if(fftPlot != nullptr) {
 		size_t length = impulse.length();
 
-		constexpr size_t minFFTsize = 1024;
+		static constexpr size_t minFFTsize = 1024;
 
 		auto pow2length =  std::max(minFFTsize, static_cast<size_t>(pow(2, 2 + floor(log2(length)))));
 		alignas(16) std::vector <std::complex<double>> complexInput(pow2length, {0.0, 0.0});
 
-		qDebug() << "FFT size" << pow2length;
+		//qDebug() << "FFT size" << pow2length;
 
 		size_t a = (pow2length - length + 1) / 2;
 
