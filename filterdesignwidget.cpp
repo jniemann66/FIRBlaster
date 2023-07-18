@@ -17,14 +17,20 @@
 FilterDesignWidget::FilterDesignWidget(QWidget *parent)
 	: QWidget{parent}
 {
-	fftPlot = new QLabel;
-	impulsePlot = new QLabel;
+//	fftPlot = new QLabel;
+//	impulsePlot = new QLabel;
 	generateButton = new QPushButton("Generate");
 	filterType = new QComboBox;
 	startFrequency = new Slider(Qt::Horizontal, "Start Frequency");
 	transitionBand = new Slider(Qt::Horizontal, "Transition Band Width");
 	dynamicRange = new Slider(Qt::Vertical, "Sidelobe Attenuation");
-	minPhaseCheckbox = new QCheckBox("Minimum Phase");
+	minPhaseCheckbox = new QCheckBox("Minimum Phase");	
+
+//	fftPlot->installEventFilter(new PixmapResizer(fftPlotpixmap, this));
+//	impulsePlot->installEventFilter(new PixmapResizer(impulsePlotPixmap, this));
+
+	//installEventFilter
+
 
 	filterType->addItem("Low Pass", static_cast<int>(FilterType::LowPass));
 	filterType->addItem("High Pass", static_cast<int>(FilterType::HighPass));

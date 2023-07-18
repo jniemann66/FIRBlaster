@@ -9,7 +9,11 @@
 #include <QComboBox>
 #include <QWidget>
 #include <QCheckBox>
+#include <QEvent>
+#include <QResizeEvent>
+#include <QDebug>
 
+#include <functional>
 #include <optional>
 
 struct PlotInfo
@@ -28,6 +32,31 @@ struct PlotInfo
 
 	bool showCrossings{false};
 };
+
+class PixmapResizer : public QObject
+{
+	Q_OBJECT
+
+public:
+	PixmapResizer(QPixmap& p, QObject *parent = nullptr) : _pm(std::ref(p)), QObject(parent){}
+
+protected:
+	bool eventFilter(QObject *obj, QEvent *event) override {
+		if(event->type() == QEvent::Resize) {
+
+			QResizeEvent *resizeEvent = static_cast<QResizeEvent*>(event);
+			qDebug() << resizeEvent->size();
+			QPixmap &p = _pm.get();
+			p = std::move(p.scaled(resizeEvent->size()));
+			return true;
+		}
+		return QObject::eventFilter(obj, event);
+	}
+
+	// store a reference to pixmap
+	std::reference_wrapper<QPixmap> _pm;
+};
+
 
 class FilterDesignWidget : public QWidget
 {
@@ -56,8 +85,12 @@ signals:
 private:
 	QLabel *impulsePlot{nullptr};
 	QLabel *fftPlot{nullptr};
-	QPixmap fftPlotpixmap{1024, 768};
-	QPixmap impulsePlotPixmap{1024, 768};
+//	QPixmap fftPlotpixmap{1024, 768};
+//	QPixmap impulsePlotPixmap{1024, 768};
+
+	QPixmap fftPlotpixmap{512, 384};
+	QPixmap impulsePlotPixmap{512, 384};
+
 	QPushButton *generateButton{nullptr};
 	QComboBox *filterType{nullptr};
 	Slider *startFrequency{nullptr};
