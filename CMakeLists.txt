@@ -11,6 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+find_library(FFTW_LIBRARY NAMES fftw3 libfftw3-3 HINT ${PROJECT_SOURCE_DIR}/fftw64)
 
 include_directories(fftw64)
 link_directories(fftw64)
@@ -52,7 +53,7 @@ else()
     endif()
 endif()
 
-target_link_libraries(FIRBlaster PRIVATE libfftw3-3 Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(FIRBlaster PRIVATE ${FFTW_LIBRARY} Qt${QT_VERSION_MAJOR}::Widgets)
 
 set_target_properties(FIRBlaster PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
